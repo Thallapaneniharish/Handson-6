@@ -1,0 +1,61 @@
+import timeit
+import random
+import matplotlib.pyplot as plt
+
+def quicksort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort(left) + middle + quicksort(right)
+
+def quicksort_random(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[random.randint(0, len(arr) - 1)]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quicksort_random(left) + middle + quicksort_random(right)
+
+def benchmark(sort_function, array):
+    return timeit.timeit(lambda: sort_function(array), number=1)
+
+sizes = list(range(100, 1001, 100))
+best_case_times = []
+worst_case_times = []
+average_case_times = []
+best_case_times_random = []
+worst_case_times_random = []
+average_case_times_random = []
+
+for size in sizes:
+    best_case = list(range(size))
+    worst_case = list(range(size, 0, -1))
+    average_case = [random.randint(0, size) for _ in range(size)]
+
+    best_case_times.append(benchmark(quicksort, best_case))
+    worst_case_times.append(benchmark(quicksort, worst_case))
+    average_case_times.append(benchmark(quicksort, average_case))
+
+    best_case_times_random.append(benchmark(quicksort_random, best_case))
+    worst_case_times_random.append(benchmark(quicksort_random, worst_case))
+    average_case_times_random.append(benchmark(quicksort_random, average_case))
+
+plt.figure(figsize=(10, 6))
+#plt.plot(sizes, best_case_times, label='Best Case (Non-random Pivot)')
+#plt.plot(sizes, worst_case_times, label='Worst Case (Non-random Pivot)')
+#plt.plot(sizes, average_case_times, label='Average Case (Non-random Pivot)')
+
+plt.plot(sizes, best_case_times_random, label='Best Case (Random Pivot)')
+plt.plot(sizes, worst_case_times_random, label='Worst Case (Random Pivot)')
+plt.plot(sizes, average_case_times_random, label='Average Case (Random Pivot)')
+
+plt.xlabel('Input Size')
+plt.ylabel('Time (seconds)')
+plt.title('Quicksort Benchmark')
+plt.legend()
+plt.show()
+
